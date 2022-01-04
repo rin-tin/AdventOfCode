@@ -1,8 +1,8 @@
 // challenge from https://adventofcode.com/2021/day/4
 
 class Board {
-    nums: number[];
-    width: number;
+    readonly nums: number[];
+    readonly width: number;
     called: number[];
     lastCalled: number;
     
@@ -11,7 +11,7 @@ class Board {
 
         this.width = srows.length;
         if (srows.length !== srows[0].length) {
-            throw "not square input";
+            throw("not square input");
         }
 
         this.nums = srows.flatMap(s => s.map(s => Number(s)));
@@ -33,6 +33,7 @@ class Board {
         if (this.called.length < this.width) {
             return false;
         }
+
         for(let i = 0; i < this.width; i++) {
             if (this.checkRow(i)) {
                 return true;
@@ -41,6 +42,7 @@ class Board {
                 return true;
             } 
         }
+        
         return false;
     }
 
@@ -56,12 +58,12 @@ class Board {
                 j++;
             }
         }
+
         return sum * this.lastCalled;
     }
 
     private checkRow(rowNum: number): boolean {
         const startNum = (rowNum * this.width);
-        
         const startIndex = this.called.findIndex(num => num === startNum);
 
         if (startIndex === -1 || this.called.length - startIndex < this.width) {
@@ -69,8 +71,9 @@ class Board {
         }
 
         for(let i = 1; i < this.width; i++) {
-            if(startNum +i !== this.called[startIndex +i])
+            if(startNum +i !== this.called[startIndex +i]) {
                 return false;
+            }
         }   
 
         return true;
@@ -84,7 +87,6 @@ class Board {
         }
 
         for(let i = 1; i < this.width; i++) {
-
             const targetNum = startNum + (i * this.width);            
             const offset = this.called.slice(startIndex, startIndex + this.width).findIndex(n => n === targetNum);
     
@@ -99,13 +101,11 @@ class Board {
     }
 }
 
-// inputs
-const data = await Deno.readTextFile("inputs/day4.txt");
-const d = data.split("\n\n");
-const input = d[0].split(",").map(s => Number(s));
 
-function part1(){
-    const boards = d.slice(1).map(s => new Board(s));
+export function part1(data: Readonly<string[]>) {
+    const input = data[0].split(",").map(s => Number(s));
+    const boards = data.slice(1).map(s => new Board(s));
+    
     for(const num of input) {
         for(const board of boards ) {
             board.mark(num);
@@ -115,11 +115,14 @@ function part1(){
             }
         }
     }
-    console.log("part1 cannot determine winner");
+
+    console.log("part1: cannot determine winner");
 }
 
-function part2(){
-    let boards = d.slice(1).map(s => new Board(s));
+
+export function part2(data: Readonly<string[]>) {
+    const input = data[0].split(",").map(s => Number(s));
+    let boards = data.slice(1).map(s => new Board(s));
 
     for(const num of input) {
         const remove: number[] = [];
@@ -135,7 +138,7 @@ function part2(){
         const bs = boards.filter((_, bi) => !remove.includes(bi));
 
         if(bs.length === 0) {
-            // no clear logic for choosing if more than 1 board finishes 'last' simultaneously
+            // no clear logic for choosing when more than 1 board finishes 'last' simultaneously
             // arbitrarily chose first in array as provided correct result in challenge
             console.log("part2: last winner score ", boards[remove[0]].calcScore());
             return;
@@ -143,9 +146,12 @@ function part2(){
         boards = bs;
     }
 
-    console.log("part2 cannot determine winner");
+    console.log("part2: cannot determine winner");
 }
 
-// calling
-part1();
-part2();
+
+// run
+const data = (await Deno.readTextFile("inputs/day4.txt"))?.split("\n\n");
+
+part1(data);
+part2(data);
