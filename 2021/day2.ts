@@ -1,3 +1,5 @@
+// challenge from https://adventofcode.com/2021/day/2
+
 const data = await Deno.readTextFile("inputs/day2.txt");
 
 const enum Direction { Forward, Up, Down }

@@ -1,3 +1,5 @@
+// challenge from https://adventofcode.com/2021/day/1
+
 const data = await Deno.readTextFile("inputs/day1.txt");
 const nums = data.split("\n").map((v) => Number(v));
 

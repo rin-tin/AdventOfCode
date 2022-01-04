@@ -1,3 +1,5 @@
+// challenge from https://adventofcode.com/2021/day/3
+
 const data = await Deno.readTextFile("inputs/day3.txt");
 
 const instructions = data.split("\n");

@@ -1,3 +1,5 @@
+// challenge from https://adventofcode.com/2021/day/4
+
 class Board {
     nums: number[];
     width: number;
@@ -6,7 +8,7 @@ class Board {
     
     constructor(input: string) {
         const srows = input.split("\n").map(s => s.split(" ").filter(s => s.length > 0));
-        // console.log(srows);
+
         this.width = srows.length;
         if (srows.length !== srows[0].length) {
             throw "not square input";
@@ -33,11 +35,9 @@ class Board {
         }
         for(let i = 0; i < this.width; i++) {
             if (this.checkRow(i)) {
-                console.log("checkrow", this);
                 return true;
             } 
             if (this.checkCol(i)) {
-                console.log("checkcol", this);
                 return true;
             } 
         }
@@ -99,21 +99,53 @@ class Board {
     }
 }
 
-async function run(){
-    const data = await Deno.readTextFile("inputs/day4.txt");
-    const d = data.split("\n\n");
-    const input = d[0].split(",").map(s => Number(s));
-    const boards = d.slice(1).map(s => new Board(s));
+// inputs
+const data = await Deno.readTextFile("inputs/day4.txt");
+const d = data.split("\n\n");
+const input = d[0].split(",").map(s => Number(s));
 
+function part1(){
+    const boards = d.slice(1).map(s => new Board(s));
     for(const num of input) {
         for(const board of boards ) {
             board.mark(num);
             if(board.check()){
-                console.log(board.calcScore());
+                console.log("part1: first winner score ", board.calcScore());
                 return;
             }
         }
     }
+    console.log("part1 cannot determine winner");
 }
 
-run();
+function part2(){
+    let boards = d.slice(1).map(s => new Board(s));
+
+    for(const num of input) {
+        const remove: number[] = [];
+        
+        for(let b = 0; b < boards.length; b++) {
+            const board = boards[b];
+
+            board.mark(num);
+            if(board.check()){
+                remove.push(b);
+            }
+        }
+        const bs = boards.filter((_, bi) => !remove.includes(bi));
+
+        if(bs.length === 0) {
+            // no clear logic for choosing if more than 1 board finishes 'last' simultaneously
+            // arbitrarily chose first in array as provided correct result in challenge
+            console.log("part2: last winner score ", boards[remove[0]].calcScore());
+            return;
+        }
+        boards = bs;
+    }
+
+    console.log("part2 cannot determine winner");
+}
+
+// calling
+part1();
+part2();
